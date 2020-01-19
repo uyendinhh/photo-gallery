@@ -4,12 +4,11 @@ require('dotenv').config({path: __dirname + '/../../.env'}); // Configure dotenv
 // Configure aws with your accessKeyId and your secretAccessKey
 aws.config.update({
   region: 'us-east-2', // Put your aws region here
-  accessKeyId: 'AKIATJUGNOW4ZUOHAFOD',
-  secretAccessKey: 'rO7oFyFsIIBatwxH1F0vlObKDBCws4jkEjzspgN7'
+  accessKeyId: process.env.AWSAccessKeyId,
+  secretAccessKey: process.env.AWSSecretKey 
 })
 
-// console.log(process.env.bucket);
-const S3_BUCKET = 'photo-gallery-mobile';
+const S3_BUCKET = process.env.Bucket;
 // Now lets export this function so we can call it from somewhere else
 exports.sign_s3 = (req,res) => {
   const s3 = new aws.S3();  // Create a new instance of S3
