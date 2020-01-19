@@ -7,6 +7,7 @@ import { CameraResultType, CameraSource, CameraPhoto, Capacitor, FilesystemDirec
 import axios from 'axios';
 
 const PHOTO_STORAGE = "photos";
+var ip = 'http://18.212.22.133:5000/';
 
 export function usePhotoGallery() {
 
@@ -75,7 +76,7 @@ export function usePhotoGallery() {
       directory: FilesystemDirectory.Data
     });
 
-    axios.post("http://localhost:3001/sign_s3", {
+    axios.post(ip + 'sign_s3', {
       fileName : fileName,
       fileType : 'image/jpeg'
     })
@@ -152,7 +153,7 @@ export function usePhotoGallery() {
 
     console.log('delete photo', photo.filepath);
     // delete photo from s3
-    axios.put("http://localhost:3001/delete_photo", { fileName: photo.filepath })
+    axios.put(ip + "delete_photo", { fileName: photo.filepath })
     .then(res => {
 
     }).catch(err => {
