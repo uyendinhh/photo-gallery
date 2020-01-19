@@ -74,7 +74,7 @@ export function usePhotoGallery() {
       data: base64Data,
       directory: FilesystemDirectory.Data
     });
-    console.log("Prep before making request");
+
     axios.post("http://localhost:3001/sign_s3", {
       fileName : fileName,
       fileType : 'image/jpeg'
@@ -95,7 +95,7 @@ export function usePhotoGallery() {
       
       axios.put(signedRequest, dataToUpload, options)
       .then(result => {
-        console.log("Response from s3")
+        console.log("Response after uploading photo", result);
         // this.setState({success: true});
       })
       .catch(error => {
@@ -149,6 +149,15 @@ export function usePhotoGallery() {
       directory: FilesystemDirectory.Data
     });
     setPhotos(newPhotos);
+
+    console.log('delete photo', photo.filepath);
+    // delete photo from s3
+    axios.put("http://localhost:3001/delete_photo", { fileName: photo.filepath })
+    .then(res => {
+
+    }).catch(err => {
+      alert(err);
+    });
   };
 
   return {
