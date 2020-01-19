@@ -46,15 +46,15 @@ export function usePhotoGallery() {
     const newPhotos = [savedFileImage, ...photos];
     setPhotos(newPhotos);
     set(PHOTO_STORAGE,
-      isPlatform('hybrid')
-        ? JSON.stringify(newPhotos)
-        : JSON.stringify(newPhotos.map(p => {
-          // Don't save the base64 representation of the photo data, 
-          // since it's already saved on the Filesystem
-          const photoCopy = { ...p };
-          delete photoCopy.base64;
-          return photoCopy;
-        })));
+        isPlatform('hybrid')
+            ? JSON.stringify(newPhotos)
+            : JSON.stringify(newPhotos.map(p => {
+              // Don't save the base64 representation of the photo data,
+              // since it's already saved on the Filesystem
+              const photoCopy = { ...p };
+              delete photoCopy.base64;
+              return photoCopy;
+            })));
 
   };
 
@@ -75,37 +75,37 @@ export function usePhotoGallery() {
       directory: FilesystemDirectory.Data
     });
     console.log("Prep before making request");
-    axios.post("http://localhost:3001/sign_s3",{
+    axios.post("http://localhost:3001/sign_s3", {
       fileName : fileName,
-      fileType : fileName
+      fileType : 'image/jpeg'
     })
-    .then(response => {
-      console.log('response')
-      // var returnData = response.data.data.returnData;
-      // var signedRequest = returnData.signedRequest;
-      // var url = returnData.url;
-      // this.setState({url: url})
-      console.log("Recieved a signed request " + response);
+        .then(response => {
+          var returnData = response.data.data.returnData;
+          var signedRequest = returnData.signedRequest;
+          var url = returnData.url;
+          // this.setState({url: url})
+          console.log("Recieved a signed request " + signedRequest);
 
-      // var options = {
-      //   headers: {
-      //     'Content-Type': fileType
-      //   }
-      // };
+          var options = {
+            headers: {
+              'Content-Type': 'image/jpeg',
+            }
+          };
+          var dataToUpload = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ""), 'base64');
 
-      // axios.put(signedRequest,file,options)
-      // .then(result => {
-      //   console.log("Response from s3")
-      //   // this.setState({success: true});
-      // })
-      // .catch(error => {
-      //   alert("ERROR " + JSON.stringify(error));
-      // })
-    })
-    .catch(error => {
-      alert(JSON.stringify(error));
-    })
-  
+          axios.put(signedRequest, dataToUpload, options)
+              .then(result => {
+                console.log("Response from s3")
+                // this.setState({success: true});
+              })
+              .catch(error => {
+                alert("ERROR " + JSON.stringify(error));
+              })
+        })
+        .catch(error => {
+          alert(JSON.stringify(error));
+        })
+
     return getPhotoFile(photo, fileName);
   };
 
@@ -126,7 +126,7 @@ export function usePhotoGallery() {
       };
     }
     else {
-      // Use webPath to display the new image instead of base64 since it's 
+      // Use webPath to display the new image instead of base64 since it's
       // already loaded into memory
       return {
         filepath: fileName,
@@ -163,4 +163,3 @@ export interface Photo {
   webviewPath?: string;
   base64?: string;
 }
-
