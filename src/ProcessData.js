@@ -15,7 +15,7 @@ class App extends Component {
   }
   // Perform the upload
   handleUpload = (ev) => {
-    let file = this.uploadInput.files[0];
+    let file = this.uploadInput.files[0];    
     // Split the filename to get the name and type
     let fileParts = this.uploadInput.files[0].name.split('.');
     let fileName = fileParts[0];
@@ -38,14 +38,14 @@ class App extends Component {
           'Content-Type': fileType
         }
       };
-      axios.put(signedRequest,file,options)
-      .then(result => {
-        console.log("Response from s3")
-        this.setState({success: true});
-      })
-      .catch(error => {
-        alert("ERROR " + JSON.stringify(error));
-      })
+    //   axios.put(signedRequest,file,options)
+    //   .then(result => {
+    //     console.log("Response from s3")
+    //     this.setState({success: true});
+    //   })
+    //   .catch(error => {
+    //     alert("ERROR " + JSON.stringify(error));
+    //   })
     })
     .catch(error => {
       alert(JSON.stringify(error));

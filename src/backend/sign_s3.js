@@ -1,5 +1,6 @@
 var aws = require('aws-sdk'); 
-require('dotenv').config(); // Configure dotenv to load in the .env file
+require('dotenv').config({path: __dirname + '/../../.env'}); // Configure dotenv to load in the .env file
+
 // Configure aws with your accessKeyId and your secretAccessKey
 aws.config.update({
   region: 'us-east-2', // Put your aws region here
@@ -7,7 +8,8 @@ aws.config.update({
   secretAccessKey: 'rO7oFyFsIIBatwxH1F0vlObKDBCws4jkEjzspgN7'
 })
 
-const S3_BUCKET = 'photo-gallery-mobile'
+// console.log(process.env.bucket);
+const S3_BUCKET = 'photo-gallery-mobile';
 // Now lets export this function so we can call it from somewhere else
 exports.sign_s3 = (req,res) => {
   const s3 = new aws.S3();  // Create a new instance of S3
