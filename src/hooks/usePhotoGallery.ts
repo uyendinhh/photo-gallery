@@ -75,32 +75,32 @@ export function usePhotoGallery() {
       directory: FilesystemDirectory.Data
     });
     console.log("Prep before making request");
-    axios.post("http://localhost:3001/sign_s3",{
+    axios.post("http://localhost:3001/sign_s3", {
       fileName : fileName,
-      fileType : fileName
+      fileType : 'image/jpeg'
     })
     .then(response => {
-      console.log('response')
-      // var returnData = response.data.data.returnData;
-      // var signedRequest = returnData.signedRequest;
-      // var url = returnData.url;
+      var returnData = response.data.data.returnData;
+      var signedRequest = returnData.signedRequest;
+      var url = returnData.url;
       // this.setState({url: url})
-      console.log("Recieved a signed request " + response);
+      console.log("Recieved a signed request " + signedRequest);
 
-      // var options = {
-      //   headers: {
-      //     'Content-Type': fileType
-      //   }
-      // };
-
-      // axios.put(signedRequest,file,options)
-      // .then(result => {
-      //   console.log("Response from s3")
-      //   // this.setState({success: true});
-      // })
-      // .catch(error => {
-      //   alert("ERROR " + JSON.stringify(error));
-      // })
+      var options = {
+        headers: {
+          'Content-Type': 'image/jpeg',
+        }
+      };
+      var dataToUpload = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+      
+      axios.put(signedRequest, dataToUpload, options)
+      .then(result => {
+        console.log("Response from s3")
+        // this.setState({success: true});
+      })
+      .catch(error => {
+        alert("ERROR " + JSON.stringify(error));
+      })
     })
     .catch(error => {
       alert(JSON.stringify(error));
