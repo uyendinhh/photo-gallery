@@ -8,6 +8,7 @@ import axios from 'axios';
 
 const PHOTO_STORAGE = "photos";
 var ip = 'http://18.212.22.133:5000/';
+ip = 'http://localhost:5000/';
 
 export function usePhotoGallery() {
 
@@ -32,6 +33,28 @@ export function usePhotoGallery() {
         }
       }
       setPhotos(photosInStorage);
+      
+      
+      
+      axios.get(ip + 'get_photos')
+      .then(res => {
+        let photoNames = res.data.data;
+        
+        photoNames.forEach((e: any) => {
+          axios.get(ip + 'get_photo', { params: {fileName: e} })
+          .then(res => {
+            console.log('result', res);
+            
+          }).catch(err => {
+            alert(err);
+          })
+
+        }) 
+        console.log('res', res);
+        
+      }).catch(err => {
+        alert(err);
+      })
     };
     loadSaved();
   }, [get, readFile]);
@@ -112,6 +135,8 @@ export function usePhotoGallery() {
 
 
   const getPhotoFile = async (cameraPhoto: CameraPhoto, fileName: string): Promise<Photo> => {
+    console.log('get photo', fileName);
+    
     if (isPlatform('hybrid')) {
       // Get the new, complete filepath of the photo saved on filesystem
       const fileUri = await getUri({
@@ -119,16 +144,25 @@ export function usePhotoGallery() {
         path: fileName
       });
 
+      
       // Display the new image by rewriting the 'file://' path to HTTP
       // Details: https://ionicframework.com/docs/building/webview#file-protocol
       return {
         filepath: fileUri.uri,
         webviewPath: Capacitor.convertFileSrc(fileUri.uri),
       };
+      
     }
     else {
       // Use webPath to display the new image instead of base64 since it's 
       // already loaded into memory
+      axios.get(ip + 'get_photos')
+        .then(res => {
+          console.log('res', res);
+          
+        }).catch(err => {
+          alert(err);
+        })
       return {
         filepath: fileName,
         webviewPath: cameraPhoto.webPath
