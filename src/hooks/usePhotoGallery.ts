@@ -4,6 +4,7 @@ import { useFilesystem, base64FromPath } from '@ionic/react-hooks/filesystem';
 import { useStorage } from '@ionic/react-hooks/storage';
 import { isPlatform } from '@ionic/react';
 import { CameraResultType, CameraSource, CameraPhoto, Capacitor, FilesystemDirectory } from "@capacitor/core";
+import axios from 'axios';
 
 const PHOTO_STORAGE = "photos";
 
@@ -73,6 +74,38 @@ export function usePhotoGallery() {
       data: base64Data,
       directory: FilesystemDirectory.Data
     });
+    console.log("Prep before making request");
+    axios.post("http://localhost:3001/sign_s3",{
+      fileName : fileName,
+      fileType : fileName
+    })
+    .then(response => {
+      console.log('response')
+      // var returnData = response.data.data.returnData;
+      // var signedRequest = returnData.signedRequest;
+      // var url = returnData.url;
+      // this.setState({url: url})
+      console.log("Recieved a signed request " + response);
+
+      // var options = {
+      //   headers: {
+      //     'Content-Type': fileType
+      //   }
+      // };
+
+      // axios.put(signedRequest,file,options)
+      // .then(result => {
+      //   console.log("Response from s3")
+      //   // this.setState({success: true});
+      // })
+      // .catch(error => {
+      //   alert("ERROR " + JSON.stringify(error));
+      // })
+    })
+    .catch(error => {
+      alert(JSON.stringify(error));
+    })
+  
     return getPhotoFile(photo, fileName);
   };
 
