@@ -8,15 +8,16 @@ import axios from 'axios';
 
 const PHOTO_STORAGE = "photos";
 var ip = 'http://54.208.43.125:5000/';
-// ip = 'http://localhost:5000/';
+ip = 'http://localhost:5000/';
 
 export function usePhotoGallery() {
 
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [photos, setPhotos ] = useState<Photo[]>([]);
+  const [S3Photos, setS3Photos] = useState<String[]>([]);
   const { getPhoto } = useCamera();
   const { deleteFile, getUri, readFile, writeFile } = useFilesystem();
   const { get, set } = useStorage();
-
+  const CDNEndpoint = 'http://photo-gallery-mobile.s3-website.us-east-2.amazonaws.com/';
   useEffect(() => {
     const loadSaved = async () => {
       const photosString = await get('photos');
@@ -30,31 +31,25 @@ export function usePhotoGallery() {
           });
           // Web platform only: Save the photo into the base64 field
           photo.base64 = `data:image/jpeg;base64,${file.data}`;
+          console.log('file data', typeof file.data);
+          
         }
       }
-      setPhotos(photosInStorage);
-      
-      
-      
       axios.get(ip + 'get_photos')
       .then(res => {
         let photoNames = res.data.data;
-        
-        photoNames.forEach((e: any) => {
-          axios.get(ip + 'get_photo', { params: {fileName: e} })
-          .then(res => {
-            console.log('result', res);
-            
-          }).catch(err => {
-            alert(err);
-          })
+        let s3Photos : String[] = [];
+        photoNames.forEach((e: string) => {
+          s3Photos.push(`${CDNEndpoint}${e}`);
+        })
+        setS3Photos(s3Photos);
 
-        }) 
-        console.log('res', res);
-        
+        console.log('get all photos name', photoNames);
       }).catch(err => {
         alert(err);
       })
+      // setPhotos(photosInStorage);
+      
     };
     loadSaved();
   }, [get, readFile]);
@@ -195,10 +190,25 @@ export function usePhotoGallery() {
     });
   };
 
+  const deletePhotoS3 = (url: String) => {
+    let fileName = url.substring(CDNEndpoint.length, url.length); 
+    // delete photo from s3
+    axios.put(ip + "delete_photo", { fileName })
+    .then(res => { 
+      let newS3Photos = S3Photos.filter(photo => photo != fileName);
+      setS3Photos(newS3Photos);
+      console.log('re-render');
+    }).catch(err => {
+      alert(err);
+    });
+  }
+
   return {
     deletePhoto,
+    deletePhotoS3,
     photos,
-    takePhoto
+    takePhoto,
+    S3Photos
   };
 }
 

@@ -4,9 +4,9 @@ import { camera, trash, close } from 'ionicons/icons';
 import { usePhotoGallery, Photo } from '../hooks/usePhotoGallery';
 
 const Tab2: React.FC = () => {
-  const { deletePhoto, photos, takePhoto } = usePhotoGallery();
+  const { deletePhoto, deletePhotoS3, photos, takePhoto, S3Photos } = usePhotoGallery();
   const [photoToDelete, setPhotoToDelete] = useState<Photo>();
-
+  const [photoToDeleteS3, setPhotoToDeleteS3] = useState<String>(); 
   return (
     <IonPage>
       <IonHeader>
@@ -22,6 +22,11 @@ const Tab2: React.FC = () => {
                 <IonImg onClick={() => setPhotoToDelete(photo)} src={photo.base64 ?? photo.webviewPath} />
               </IonCol>
             ))}
+            {S3Photos.map((photo, index) => (
+              <IonCol size="6" key={index}>
+                <IonImg onClick={() => setPhotoToDeleteS3(photo)} src={`${photo}`} />
+              </IonCol>
+            ))}
           </IonRow>
         </IonGrid>
 
@@ -32,7 +37,7 @@ const Tab2: React.FC = () => {
         </IonFab>
 
         <IonActionSheet
-          isOpen={!!photoToDelete}
+          isOpen={!!photoToDelete || !!photoToDeleteS3}
           buttons={[{
             text: 'Delete',
             role: 'destructive',
@@ -41,6 +46,9 @@ const Tab2: React.FC = () => {
               if (photoToDelete) {
                 deletePhoto(photoToDelete);
                 setPhotoToDelete(undefined);
+              } else if (photoToDeleteS3) {
+                deletePhotoS3(photoToDeleteS3);
+                setPhotoToDeleteS3(undefined); 
               }
             }
           }, {
@@ -48,7 +56,11 @@ const Tab2: React.FC = () => {
             icon: close,
             role: 'cancel'
           }]}
-          onDidDismiss={() => setPhotoToDelete(undefined)}
+          onDidDismiss={() => {
+              setPhotoToDelete(undefined);
+              setPhotoToDeleteS3(undefined);
+            }
+          }
         />
 
 
