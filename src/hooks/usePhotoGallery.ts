@@ -74,7 +74,6 @@ export function usePhotoGallery() {
           delete photoCopy.base64;
           return photoCopy;
         })));
-
   };
 
   const savePicture = async (photo: CameraPhoto, fileName: string) => {
