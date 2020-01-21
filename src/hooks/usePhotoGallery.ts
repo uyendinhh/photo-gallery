@@ -7,8 +7,8 @@ import { CameraResultType, CameraSource, CameraPhoto, Capacitor, FilesystemDirec
 import axios from 'axios';
 
 const PHOTO_STORAGE = "photos";
-var ip = 'http://18.212.22.133:5000/';
-ip = 'http://localhost:5000/';
+var ip = 'http://54.208.43.125:5000/';
+// ip = 'http://localhost:5000/';
 
 export function usePhotoGallery() {
 
